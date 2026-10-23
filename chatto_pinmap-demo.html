@@ -1,0 +1,588 @@
+<!doctype html>
+<html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>ちゃっとピンマップ｜操作デモ</title><style>:root{color-scheme:dark;--bg:#0f1219;--card:#1c222f;--card2:#232d3e;--line:#2a3447;--accent:#ff4d5e;--muted:#8b95a5;--safe:env(safe-area-inset-bottom,0px)}*{box-sizing:border-box}html,body{margin:0;padding:0;background:var(--bg);color:#e6e8ec;font:14px/1.5 system-ui,-apple-system,'Segoe UI',sans-serif}body{height:100vh;height:100dvh;display:flex;flex-direction:column;overflow:hidden}button,select,input,textarea{font:inherit;color:inherit}button,select{cursor:pointer}button{border:1px solid var(--line);border-radius:12px;background:var(--card2);min-height:40px;padding:8px 13px;font-weight:750}button:active{transform:scale(.97)}button:disabled{opacity:.45;cursor:default}button:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:3px}button.primary,button[type=submit],#upload,#addCustom{background:var(--accent);color:#10131b;border-color:var(--accent)}header{height:62px;flex-shrink:0;display:flex;align-items:center;justify-content:space-between;padding:0 15px;border-bottom:1px solid var(--line);gap:10px}.brand{display:flex;align-items:center;gap:9px}.brand-icon{width:34px;height:34px;display:grid;place-items:center;background:var(--card);border:1px solid var(--line);border-radius:11px;color:var(--accent);font-size:28px;line-height:1}.brand b{display:block;font-size:16px;letter-spacing:-.04em}.brand span{display:block;font-size:10px;color:var(--muted);font-weight:700}#templateBtn{display:flex;align-items:center;gap:8px;border-radius:999px;background:var(--card);min-width:108px;justify-content:center;white-space:nowrap;font-size:12px}#templateDot{width:9px;height:9px;border-radius:50%;box-shadow:0 0 0 3px #ffffff0b}#status{flex-shrink:0;min-height:25px;padding:4px 14px;background:#141b23;color:#97b3aa;font-size:10px;border-bottom:1px solid #ffffff05;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}main{flex:1;min-height:0;width:100%;position:relative;overflow:auto;padding-bottom:calc(64px + var(--safe))}section{width:100%;padding:18px;max-width:800px;margin:auto}#mapView{position:relative;max-width:none;padding:0;height:100%;display:flex;flex-direction:column}#viewport{flex:1;min-height:170px;position:relative;overflow:hidden;background:#121821;touch-action:none;isolation:isolate;background-image:linear-gradient(#ffffff03 1px,transparent 1px),linear-gradient(90deg,#ffffff03 1px,transparent 1px);background-size:40px 40px}#surface{position:absolute;transform-origin:0 0;display:none}#mapImage{display:block;width:100%;height:100%;pointer-events:none;user-select:none}#routes,#pins{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}#routes polyline{fill:none;stroke:#28c4aa;stroke-width:4px;vector-effect:non-scaling-stroke;stroke-linejoin:round;stroke-linecap:round}#routes .draft{stroke:#ffd369;stroke-dasharray:5 5}#pins button{position:absolute;transform:translate(-50%,-100%);pointer-events:auto;display:flex;flex-direction:column;align-items:center;gap:5px;padding:0;border:0;background:transparent!important;min-height:0;filter:drop-shadow(0 5px 8px #0008);font-size:11px;max-width:145px}#pins button:active{transform:translate(-50%,-100%) scale(.95)}.pin-marker{display:grid;place-items:center;width:29px;height:29px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);background:var(--pin-color);border:2px solid #ffffffed}.pin-marker i{font-style:normal;transform:rotate(45deg);color:white;font-weight:900;font-size:13px}.pin-title{padding:3px 8px;background:#0f1219ed;border:1px solid var(--line);border-radius:999px;max-width:145px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.pin-urgent .pin-marker{box-shadow:0 0 0 5px #ff3b3022}.map-picker{display:flex;gap:8px;align-items:center;flex-shrink:0;height:49px;padding:6px 12px;background:#151a24;border-bottom:1px solid var(--line)}select{border:1px solid var(--line);border-radius:10px;background:var(--card);padding:9px;max-width:100%;min-width:0}#maps{flex:1;border:0;font-size:12px;background:transparent;padding-left:0}.map-picker button{font-size:11px;padding:6px 10px;min-height:32px}.map-picker button.active{background:var(--accent);color:#10131b}#mapControls{position:absolute;right:12px;top:64px;display:flex;flex-direction:column;gap:10px;z-index:3}#mapControls button{width:44px;height:44px;display:grid;place-items:center;padding:0;border-radius:50%;background:#1c222fe8;font-size:21px;box-shadow:0 4px 10px #0003;backdrop-filter:blur(8px)}#pinBar{height:58px;display:flex;flex-shrink:0;align-items:center;gap:8px;padding:8px 12px;overflow-x:auto;scrollbar-width:none;background:var(--card);border-top:1px solid var(--line)}#pinBar::-webkit-scrollbar{display:none}.chip{display:flex;align-items:center;gap:8px;border-radius:999px;white-space:nowrap;flex-shrink:0;height:38px;font-size:12px}.chip i{width:10px;height:10px;border-radius:50%;flex-shrink:0}.chip.active{background:#e6e8ec;color:#0f1219;border-color:#e6e8ec}#hint{position:absolute;left:12px;bottom:66px;background:#0f1219cc;padding:5px 9px;border-radius:8px;font-size:10px;pointer-events:none;margin:0;max-width:calc(100% - 24px)}#drawing{position:absolute;left:12px;bottom:70px;z-index:4;background:#1c222ff2;border:1px solid var(--line);border-radius:14px;padding:7px;box-shadow:0 6px 16px #0004;display:flex;align-items:center;gap:5px;max-width:calc(100% - 24px)}#drawing span{font-size:11px;padding:0 5px}#drawing button{font-size:11px;min-height:32px;padding:5px 9px}#drawing:not([hidden])~#hint{display:none}.compact-options{position:absolute;width:1px;height:1px;overflow:hidden;opacity:.01;left:0;top:0}.compact-options select{width:1px;height:1px;padding:0;border:0}#bottomNav{position:fixed;bottom:0;left:0;right:0;height:calc(64px + var(--safe));padding-bottom:var(--safe);display:flex;background:#0f1219;border-top:1px solid var(--line);z-index:10}#bottomNav button{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;border:0;border-radius:0;background:none;color:var(--muted);font-size:10px;min-width:0}#bottomNav i{font-style:normal;font-size:20px;filter:grayscale(.8);line-height:1.4}#bottomNav button.active{color:var(--accent)}#bottomNav button.active i{filter:none}h2{font-size:16px;font-weight:850;margin:0 0 10px}p{margin:8px 0 12px}.muted{color:var(--muted);font-size:12px;line-height:1.6}.settings-card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:16px;margin:0 0 14px}.settings-card p{font-size:12px;color:var(--muted)}label{display:block;font-size:12px;font-weight:650;margin:12px 0 7px}label input,label textarea{display:block;width:100%;margin-top:6px}input,textarea{border:1px solid var(--line);border-radius:12px;background:#0f1219;padding:11px;min-width:0;outline:none}input:focus,textarea:focus{border-color:var(--accent)}input[type=file]{font-size:11px}#customColor{width:70px;height:44px;padding:5px}.template-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.template-card{text-align:left;position:relative;border-top:4px solid;padding:12px;background:#1c222f;border-radius:16px;display:flex;flex-direction:column;gap:6px;min-width:0}.template-card strong{font-size:13px}.template-card span{font-size:11px;line-height:1.5;color:var(--muted)}.template-card.active{background:#232d3e;outline:2px solid var(--accent);outline-offset:-1px;color:#e6e8ec}.template-card.active span{color:#b5becd}#list article{padding:14px;background:var(--card2);border:1px solid var(--line);border-radius:16px;margin:10px 0;overflow-wrap:anywhere}#list article strong{font-size:13px}#list article button{font-size:11px;min-height:32px}.list{display:flex;flex-direction:column;gap:10px}.member-card{text-align:left;padding:15px;border-radius:16px;background:var(--card)}#memberList{margin:16px 0}dialog{color:#e6e8ec;background:#161c27;border:1px solid var(--line);border-bottom:0;border-radius:24px 24px 0 0;width:min(100%,720px);max-width:100%;max-height:84dvh;position:fixed;inset:auto 0 0;margin:0 auto;padding:0 18px calc(20px + var(--safe));box-shadow:0 -12px 40px #0007}dialog[open]{animation:slideUp .2s ease-out}dialog::backdrop{background:#0008;backdrop-filter:blur(6px)}.sheet-handle{width:36px;height:4px;background:#344055;border-radius:999px;margin:10px auto 16px}.sheet-head{display:flex;justify-content:space-between;align-items:center;gap:12px;padding-bottom:10px}.sheet-head h2{margin:0}.sheet-head p{margin:4px 0}#templateSheet .template-grid{padding:4px 0 10px}dialog label{margin-top:14px}dialog input,dialog textarea{font-size:14px}dialog .toolbar{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap;margin:15px 0 0}#form button[type=submit]{flex:1;min-height:48px;border-radius:14px}#detailNote{white-space:pre-wrap;overflow-wrap:anywhere}#delete{color:#ff7c83}#toast{position:fixed;left:50%;bottom:calc(82px + var(--safe));transform:translateX(-50%);width:max-content;max-width:90%;border-radius:999px;background:#e6e8ec;color:#0f1219;padding:11px 18px;z-index:100;font-size:12px;font-weight:750;box-shadow:0 8px 24px #0006}#empty{margin:auto;padding:40px;text-align:center;color:var(--muted);font-size:13px}.demo-banner{flex-shrink:0;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:5px 12px;background:#252b20;color:#bfcca8;font-size:10px}.demo-banner span{overflow:hidden;white-space:nowrap;text-overflow:ellipsis}.demo-banner button{font-size:10px;min-height:27px;padding:3px 8px;white-space:nowrap}body[data-screen=map] main{overflow:hidden}[hidden]{display:none!important}@keyframes slideUp{from{transform:translateY(60px);opacity:0}to{transform:translateY(0);opacity:1}}@media(min-width:900px){header{padding-left:24px;padding-right:24px}#mapView{max-width:1400px;border-left:1px solid var(--line);border-right:1px solid var(--line)}#bottomNav{justify-content:center}#bottomNav button{flex:0 1 180px}#status{text-align:center}#viewport{min-height:240px}#mapControls{right:18px}}@media(max-width:380px){.brand b{font-size:14px}.brand-icon{display:none}header{padding:0 10px}#templateBtn{min-width:90px}.map-picker{gap:5px;padding:6px 9px}.map-picker button{padding:5px 7px}.template-card{padding:10px}}@media(prefers-reduced-motion:reduce){dialog[open]{animation:none}}
+/* Keep the app inside the native WebView, including narrow screens and keyboards. */
+html{width:100%;max-width:100%;overflow-x:hidden;-webkit-text-size-adjust:100%;text-size-adjust:100%}
+body{width:100%;max-width:100%;min-width:0;height:100vh;height:var(--app-height,100dvh);padding-left:env(safe-area-inset-left,0px);padding-right:env(safe-area-inset-right,0px)}
+body>header{order:1;width:100%;min-width:0;max-width:100%}body>#status{order:2;width:100%;max-width:100%}body>main{order:3;width:100%;max-width:100%;min-width:0;min-height:0;padding-bottom:0;overflow-x:hidden;-webkit-overflow-scrolling:touch}body>.demo-banner{order:0;min-width:0;max-width:100%}
+.brand{min-width:0;flex:1 1 0}.brand-icon{flex:0 0 34px}.brand>div:last-child{min-width:0}.brand b,.brand span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}#templateBtn{flex:0 1 108px;min-width:0;max-width:35%}#templateName{min-width:0;overflow:hidden;text-overflow:ellipsis}#templateDot{flex-shrink:0}
+#mapView{min-width:0;max-width:100%}#viewport{min-width:0;min-height:0}.map-picker{display:grid;grid-template-columns:auto minmax(0,1fr) auto auto;min-width:0;width:100%;max-width:100%;height:auto;min-height:49px}#maps{width:100%;min-width:0;max-width:100%;overflow:hidden;text-overflow:ellipsis}.map-picker button{min-width:0;white-space:nowrap}
+#bottomNav{order:4;position:relative;inset:auto;flex:0 0 auto;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));width:100%;max-width:100%;height:calc(64px + var(--safe));margin:0}#bottomNav button{width:100%;max-width:100%;min-width:0;padding:6px 2px;overflow:hidden}#bottomNav span{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+section,.settings-card,.list,#memberList{min-width:0;max-width:100%}section p,.member-card,#detailTitle,#detailNote,#detailMeta{overflow-wrap:anywhere}.template-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.template-card strong,.template-card span{max-width:100%;overflow-wrap:anywhere}input,textarea,input[type=file]{max-width:100%;min-width:0}input[type=file]{width:100%;overflow:hidden}.settings-card button{max-width:100%;white-space:normal;overflow-wrap:anywhere}.sheet-head>div{min-width:0}.sheet-head>button{flex-shrink:0}
+#pinBar{width:100%;min-width:0;max-width:100%}#drawing{flex-wrap:wrap}#drawing span{min-width:0;overflow-wrap:anywhere}#toast{overflow-wrap:anywhere}dialog{width:100%;max-width:720px;max-height:84vh;max-height:calc(var(--app-height,100dvh)*.84);overflow:auto}.export-buttons{display:flex;flex-wrap:wrap;gap:8px}.export-buttons button{flex:1 1 180px}#exportMapSelect{display:block;width:100%;margin-top:6px}
+@media(max-width:600px){input,textarea,dialog input,dialog textarea{font-size:16px}.map-picker{gap:6px}.map-picker button{padding:6px 8px}.settings-card{padding:13px}header{padding-left:10px;padding-right:10px}}
+@media(max-width:330px){#templateBtn{flex-basis:86px;padding:7px 9px;gap:5px}.brand b{font-size:13px}.brand span{font-size:9px}.map-picker{padding-left:8px;padding-right:8px;gap:4px}.map-picker button{font-size:10px;padding:6px}.template-card{padding:9px}.template-card strong{font-size:12px}}
+@media(min-width:900px){#bottomNav{grid-template-columns:repeat(4,minmax(0,180px));justify-content:center}}
+
+
+#backupText{display:block;width:100%;max-width:100%;margin:12px 0;font:12px/1.5 monospace;white-space:pre;overflow:auto}#backupSheet>button{max-width:100%;margin:6px 0;white-space:normal}
+
+#openFilters{align-self:flex-start;font-size:12px;padding:5px 10px}#listView input,#listView select{max-width:100%}#detail .toolbar{flex-wrap:wrap}#settingsView button{max-width:100%;white-space:normal}
+
+input[type=color]{height:42px;padding:4px}
+</style></head>
+<body><aside class="demo-banner"><span>操作デモ · 架空の地図／端末間共有なし</span><button id="resetDemo">サンプルに戻す</button></aside><header><div class="brand"><div class="brand-icon">⌖</div><div><b>ちゃっとピンマップ</b><span>みんなでつくる共有地図</span></div></div><button id="templateBtn" aria-haspopup="dialog"><i id="templateDot"></i><span id="templateName">防災</span><span>⌄</span></button></header>
+<div id="status" role="status">起動中…</div>
+<nav id="bottomNav"><button data-view="map"><i>🗺️</i><span>地図</span></button><button data-view="list"><i>📋</i><span>一覧</span></button><button data-view="members"><i>👥</i><span>メンバー</span></button><button data-view="settings"><i>⚙️</i><span>設定</span></button></nav>
+<main><section id="mapView"><div class="map-picker"><span>🗺</span><select id="maps" aria-label="表示する地図"></select><button id="routeMode">↝ ルート</button><button id="pinMode">＋ ピン</button></div>
+<button id="openFilters">検索・表示絞り込み</button><div id="viewport"><div id="surface"><img id="mapImage" alt="共有地図" draggable="false"><svg id="routes" viewBox="0 0 100 100" preserveAspectRatio="none"></svg><div id="pins"></div></div><p id="empty">「地図と設定」から地図の画像を登録してください。<br>画像を共有すると、全員が同じ地図にピンを置けます。</p></div>
+<div id="mapControls"><button id="plus" aria-label="拡大">＋</button><button id="minus" aria-label="縮小">−</button><button id="fit" aria-label="地図全体">⌖</button></div><div class="toolbar" id="drawing" hidden><span id="drawCount"></span><button id="undo">戻す</button><button id="finishRoute">登録</button><button id="cancelMode">終了</button></div><div id="pinBar" aria-label="ピンの種類"></div><div class="compact-options"><label for="template">地図の用途</label><select id="template" aria-label="地図の用途"></select><span id="templateDesc"></span><select id="type" aria-label="登録する種類"></select></div><p id="hint" class="muted">ピンを選んで地図をタップ · ドラッグで移動</p></section>
+<section id="listView" hidden><h2>この地図のピン・ルート</h2><label>用途で絞り込み<select id="filterTemplate" aria-label="用途で絞り込み"></select></label><label>検索（タイトル・メモ・記録者）<input id="search" type="search" placeholder="キーワード"></label><label>状態<select id="filterState"><option value="all">すべて</option><option value="unconfirmed">未確認</option><option value="confirmed">確認済</option><option value="working">対応中</option><option value="resolved">解消・終了</option></select></label><label>種類<select id="filterType"><option value="all">すべて</option></select></label><label>確認日時<select id="filterAge"><option value="all">すべて</option><option value="unchecked">確認日時なし</option><option value="stale">24時間以上前・日時なし</option><option value="recent">24時間以内</option></select></label><button id="clearFilters">絞り込みを解除</button><p class="muted">絞り込みは地図と一覧に共通です。日時は端末の時計による記録です。</p><div id="list"></div><p class="muted">名前・記録日時は登録者の申告情報です。位置は自動追跡されません。</p></section>
+<section id="membersView" hidden><h2>メンバーの位置</h2><p class="muted">位置ピンを登録した人の記録です。グループ全員の一覧やオンライン状態ではありません。</p><div id="memberList" class="list"></div><div class="settings-card"><h2>現在の位置を手動で登録</h2><p class="muted">地図上で自分のいる場所を選び、名前や状況を記録します。</p><button id="memberPin" class="primary">地図で位置を選ぶ</button></div></section><section id="settingsView" hidden><h2>用途別テンプレート</h2><p>地図ごとに用途を設定できます。用途とカスタム項目は同じチャットの参加者にも共有されます。切り替えても登録済みのピン・ルートは残ります。</p><div id="templateGrid" class="template-grid"></div><h2>カスタム項目</h2><label>項目名<input id="customLabel" maxlength="30" placeholder="例：受付・出展者・休憩場所"></label><label>ピンの色<input id="customColor" type="color" value="#ec4899"></label><button id="addCustom">この地図のカスタムに追加</button><p class="muted">カスタム項目は選択中の地図に保存・共有されます。</p><h2>地図の共有</h2><p>ダウンロードした地図・紙地図の写真を画像として登録します。地図ごとにピンとルートを分けて保存します。</p><label>地図名<input id="mapName" maxlength="100" placeholder="例：○○地区・2026年10月版"></label><label class="file">地図画像を選ぶ<input id="file" type="file" accept="image/*"></label><button id="upload">画像を登録して共有</button><p id="imageInfo" class="muted"></p>
+<h2>地図管理</h2><label>管理する地図（保管済みも含む）<select id="manageMap"></select></label><label>新しい地図名<input id="renameValue" maxlength="100"></label><button id="renameMap">名前を変更して共有</button><button id="archiveMap">保管／再表示を共有</button><p class="muted">保管すると通常の地図一覧から隠れます。画像やピンは削除せず、ここから戻せます。</p><label>複製先の名前<input id="copyMapName" maxlength="100" placeholder="例：翌日の会場"></label><label><input id="copyEntries" type="checkbox"> ピン・ルートも複製する</label><button id="copyMap">地図を複製して共有</button><p class="muted">複製は新しい地図になります。用途とカスタム項目も引き継ぎます。</p><h2>地図画像の書き出し</h2><label>書き出す地図<select id="exportMapSelect" aria-label="書き出す地図"></select></label><div class="export-buttons"><button id="exportMap">地図画像をJPEGで書き出す</button><button id="exportAnnotated">ピン・ルート付きPNGを書き出す</button></div><p id="exportImageNote" class="muted"></p><p class="muted">JPEGは登録時に圧縮した地図画像です。元の写真の解像度には戻りません。PNGには登録済みのピン・ルートを重ねます。編集中の内容は含みません。</p><h2>送信待ち</h2><p>端末内に保存後、webxdcへ順次渡します。「送信受付」は全員への到達確認ではありません。通信が戻るとDelta Chatが配信します。送信待ちがある間はアプリを開いておいてください。</p><button id="retry">送信を再試行</button><h2>共有の確認・再送</h2><p id="syncDetails" class="muted"></p><button id="resendMap">表示中の地図と登録情報を再送</button><p class="muted">地図画像が正常に見える端末で実行してください。同じ地図の画像・ピン・ルート・用途と削除情報を、このアプリの参加者へ再送します。全員への到着確認ではありません。受信側は同じ地図名を選んでください。</p><h2>バックアップ</h2><label>JSONに含める地図<select id="exportScope"><option value="all">全地図（保管済みも含む）</option><option value="selected">表示中の地図</option></select></label><button id="export">JSONを書き出す</button><p id="backupExportNote" class="muted"></p><label class="file">バックアップを復元（この端末の表示のみ）<input type="file" id="import" accept="application/json,.json"></label>
+<button id="shareRestored">復元したデータを含む全地図を共有</button><p class="muted">別のアプリへ移行するときはJSONを読み込み、このボタンで全地図を送信します。画像が揃った端末で実行し、全員が移行先の同じアプリを開いてください。削除情報・保管状態も共有します。</p><h2>使い方・制約</h2><p>画像は長辺1600px以下・約180KB以下に圧縮されます。文字が読めることを確認し、必要なら地域を分割してください。対応形式は端末で表示できる画像です。PDFや地図タイルは画像へ変換してください。</p><p>写真の地図とGPS座標の対応付けは行いません。メンバーの位置も地図上で手動登録します。ルートは手動の参考線で、自動経路探索・安全判定は行いません。位置は詳細画面の「移動」で変更できます。</p><p>完全な通信断では他端末へ即時共有できません。共有範囲はこのアプリを送ったチャットです。同じアカウントの複数端末は同じ利用者名になる場合があります。</p><p>参加者一覧・既読確認は取得しません。ピンとルートは全員が編集・移動・削除できます。バックアップからの復元は共有されません。端末の保存領域が不足すると登録を停止します。</p><p class="muted">ビルド 2.3.0 / 外部通信・外部ライブラリなし</p></section></main>
+<dialog id="backupSheet" aria-labelledby="backupHeading"><div class="sheet-handle"></div><div class="sheet-head"><h2 id="backupHeading">JSONの書き出し</h2><button id="closeBackup">閉じる</button></div><p id="backupInfo"></p><button id="showBackupText">JSONを表示してコピー</button><textarea id="backupText" aria-label="バックアップJSONの全文" rows="8" readonly hidden spellcheck="false"></textarea><button id="selectBackupText" hidden>JSONをすべて選択</button><p class="muted">表示したJSONを選択してコピーし、UTF-8のテキストファイルに保存してください。拡張子は .json にします。コピーだけではバックアップファイルの保存は完了しません。</p><button id="sendBackupFile">JSONファイルを渡す 互換方式</button><p id="backupLimit" class="muted"></p></dialog><dialog id="templateSheet"><div class="sheet-handle"></div><div class="sheet-head"><div><h2>テンプレートを選択</h2><p class="muted">用途に合わせてピンセットを切替</p></div><button id="closeTemplates">閉じる</button></div><div id="sheetTemplateGrid" class="template-grid"></div></dialog><dialog id="editor"><div class="sheet-handle"></div><form id="form"><h2 id="editHeading">登録</h2><label>タイトル<input id="title" required maxlength="100"></label><label>メモ<textarea id="note" maxlength="1000" rows="4"></textarea></label><label>種類<input id="editType" maxlength="40"></label><label>色<input id="editColor" type="color" value="#338a65"></label><label>状態<select id="editState"><option value="unconfirmed">未確認</option><option value="confirmed">確認済</option><option value="working">対応中</option><option value="resolved">解消・終了</option></select></label><label>確認日時<input id="checkedAt" type="datetime-local"></label><button id="checkedNow" type="button">現在の日時を入れる</button><p class="muted">実際に確認した日時を記録してください。状態と日時は自動の安全判定ではありません。</p><div class="toolbar"><button type="button" id="cancelEdit">キャンセル</button><button type="submit">登録して共有</button></div></form></dialog>
+<dialog id="detail"><div class="sheet-handle"></div><h2 id="detailTitle"></h2><p id="detailNote"></p><p id="detailMeta" class="muted"></p><div class="toolbar"><button id="editEntry">編集</button><button id="moveEntry">移動</button><button id="delete">削除して共有</button><button id="closeDetail">閉じる</button></div></dialog><div id="toast" role="alert" hidden></div>
+<script>(function (root) {
+'use strict';
+const validId = x => typeof x === 'string' && x.length > 0 && x.length <= 200;
+const point = p => Array.isArray(p) && p.length === 2 && p.every(x => Number.isFinite(x) && x >= 0 && x <= 100);
+function valid(e) {
+ if (!e || e.v !== 1 || !validId(e.id) || !validId(e.key) || !Number.isSafeInteger(e.clock) || e.clock < 1 || typeof e.author !== 'string' || e.author.length > 80 || !Number.isFinite(e.time)) return false;
+ const d=e.data;
+ if(e.kind==='delete') return /^(pin|route):/.test(e.key) && d === null;
+ if(!d || !validId(d.map)) return false;
+ if(e.kind==='mapmeta') return e.key==='mapmeta:'+d.map && typeof d.archived==='boolean';
+ if(e.kind==='profile') return e.key==='profile:'+d.map && ['bousai','gourmet','medical','shelter','kanko','kiken','event','custom'].includes(d.template);
+ if(e.kind==='category') return e.key.startsWith('category:'+d.map+':') && typeof d.label==='string' && d.label.trim().length>0 && d.label.length<=30 && /^#[0-9a-f]{6}$/i.test(d.color);
+ if(e.kind==='map') return e.key==='map:'+d.map && typeof d.name==='string' && d.name.length<=100 && Number.isInteger(d.parts) && d.parts>=1 && d.parts<=80;
+ if(e.kind==='chunk') return e.key===`chunk:${d.map}:${d.index}` && Number.isInteger(d.index) && d.index>=0 && d.index<80 && typeof d.text==='string' && d.text.length<=24000 && /^[A-Za-z0-9+/=]+$/.test(d.text);
+ if(!['pin','route'].includes(e.kind) || !e.key.startsWith(e.kind+':') || typeof d.title!=='string' || !d.title.trim() || d.title.length>100 || typeof d.note!=='string' || d.note.length>1000 || !/^#[0-9a-f]{6}$/i.test(d.color) || (d.template!==undefined && !['bousai','gourmet','medical','shelter','kanko','kiken','event','custom'].includes(d.template))) return false;
+ if(d.state!==undefined&&!['unconfirmed','confirmed','working','resolved'].includes(d.state))return false;
+ if(d.checkedAt!==undefined&&(!Number.isFinite(d.checkedAt)||d.checkedAt<0||d.checkedAt>253402300799999))return false;
+ if(e.kind==='pin') return point(d.point) && typeof d.type==='string' && d.type.length<=40;
+ return Array.isArray(d.points) && d.points.length>=2 && d.points.length<=300 && d.points.every(point);
+}
+function newer(a,b) {return !b || a.clock>b.clock || (a.clock===b.clock && a.id>b.id);}
+class Store {
+ constructor(snapshot) {this.items=new Map();this.clock=0; if(snapshot) for(const e of snapshot) this.apply(e);}
+ apply(e) {if(!valid(e)) return false; this.clock=Math.max(this.clock,e.clock);const old=this.items.get(e.key);if(newer(e,old)) {this.items.set(e.key,JSON.parse(JSON.stringify(e)));return true;}return false;}
+ create(kind,key,data,author,id,time=Date.now()) {const e={v:1,id,clock:this.clock+1,kind,key,data,author:author.slice(0,80),time};if(!valid(e)) throw Error('登録データが不正です');this.apply(e);return e;}
+ all(kind,map) {return [...this.items.values()].filter(e=>e.kind===kind && (!map || e.data.map===map)).sort((a,b)=>a.time-b.time || a.id.localeCompare(b.id));}
+ image(map) {const m=this.items.get('map:'+map);if(!m || m.kind!=='map') return null;const chunks=[];for(let i=0;i<m.data.parts;i++){const c=this.items.get(`chunk:${map}:${i}`);if(!c || c.kind!=='chunk')return null;chunks.push(c.data.text);}return 'data:image/jpeg;base64,'+chunks.join('');}
+ snapshot(){return [...this.items.values()];}
+}
+root.PinSync={Store,valid,point};
+})(typeof module==='object'?module.exports:window);
+</script><script>window.PinTemplates = [
+  {
+    "id": "bousai",
+    "name": "防災",
+    "sub": "避難・安否",
+    "color": "#FF4D5E",
+    "desc": "避難所と危険共有",
+    "pins": [
+      {
+        "id": "shelter",
+        "label": "避難所",
+        "color": "#1AD48D"
+      },
+      {
+        "id": "water",
+        "label": "給水",
+        "color": "#4DA3FF"
+      },
+      {
+        "id": "medical",
+        "label": "医療",
+        "color": "#FF4D5E"
+      },
+      {
+        "id": "collapse",
+        "label": "崩落",
+        "color": "#FFB020"
+      },
+      {
+        "id": "flood",
+        "label": "浸水",
+        "color": "#3B82F6"
+      },
+      {
+        "id": "fire",
+        "label": "火災",
+        "color": "#FF6B35"
+      },
+      {
+        "id": "rescue",
+        "label": "要救助",
+        "color": "#FF3B30",
+        "pulse": true
+      }
+    ]
+  },
+  {
+    "id": "gourmet",
+    "name": "食事",
+    "sub": "グルメ",
+    "color": "#FF8A2A",
+    "desc": "旨い店マップ",
+    "pins": [
+      {
+        "id": "ramen",
+        "label": "ラーメン",
+        "color": "#FF8A2A"
+      },
+      {
+        "id": "cafe",
+        "label": "カフェ",
+        "color": "#8B5CF6"
+      },
+      {
+        "id": "izakaya",
+        "label": "居酒屋",
+        "color": "#F59E0B"
+      },
+      {
+        "id": "sweets",
+        "label": "スイーツ",
+        "color": "#EC4899"
+      },
+      {
+        "id": "lunch",
+        "label": "ランチ",
+        "color": "#10B981"
+      },
+      {
+        "id": "closed",
+        "label": "休業注意",
+        "color": "#6B7280"
+      }
+    ]
+  },
+  {
+    "id": "medical",
+    "name": "医療",
+    "sub": "支援",
+    "color": "#EF4444",
+    "desc": "病院・支援拠点",
+    "pins": [
+      {
+        "id": "hospital",
+        "label": "病院",
+        "color": "#EF4444"
+      },
+      {
+        "id": "pharmacy",
+        "label": "薬局",
+        "color": "#22C55E"
+      },
+      {
+        "id": "aed",
+        "label": "AED",
+        "color": "#EAB308"
+      },
+      {
+        "id": "support",
+        "label": "支援所",
+        "color": "#3B82F6"
+      }
+    ]
+  },
+  {
+    "id": "shelter",
+    "name": "避難所",
+    "sub": "生活",
+    "color": "#10B981",
+    "desc": "生活情報",
+    "pins": [
+      {
+        "id": "shelter",
+        "label": "避難所",
+        "color": "#10B981"
+      },
+      {
+        "id": "toilet",
+        "label": "トイレ",
+        "color": "#6366F1"
+      },
+      {
+        "id": "charge",
+        "label": "充電",
+        "color": "#F59E0B"
+      },
+      {
+        "id": "water",
+        "label": "給水",
+        "color": "#06B6D4"
+      }
+    ]
+  },
+  {
+    "id": "kanko",
+    "name": "観光",
+    "sub": "おでかけ",
+    "color": "#8B5CF6",
+    "desc": "映えスポット共有",
+    "pins": [
+      {
+        "id": "view",
+        "label": "絶景",
+        "color": "#8B5CF6"
+      },
+      {
+        "id": "photo",
+        "label": "映え",
+        "color": "#EC4899"
+      },
+      {
+        "id": "onsen",
+        "label": "温泉",
+        "color": "#06B6D4"
+      },
+      {
+        "id": "shop",
+        "label": "お土産",
+        "color": "#F59E0B"
+      },
+      {
+        "id": "parking",
+        "label": "駐車場",
+        "color": "#6B7280"
+      }
+    ]
+  },
+  {
+    "id": "kiken",
+    "name": "危険箇所",
+    "sub": "点検",
+    "color": "#F59E0B",
+    "desc": "まちの点検",
+    "pins": [
+      {
+        "id": "danger",
+        "label": "危険",
+        "color": "#EF4444"
+      },
+      {
+        "id": "broken",
+        "label": "破損",
+        "color": "#F59E0B"
+      },
+      {
+        "id": "dark",
+        "label": "暗い",
+        "color": "#374151"
+      },
+      {
+        "id": "traffic",
+        "label": "交通危険",
+        "color": "#DC2626"
+      },
+      {
+        "id": "fixed",
+        "label": "改善済",
+        "color": "#10B981"
+      }
+    ]
+  },
+  {
+    "id": "event",
+    "name": "イベント",
+    "sub": "ブース",
+    "color": "#EC4899",
+    "desc": "フェス・学園祭",
+    "pins": [
+      {
+        "id": "stage",
+        "label": "ステージ",
+        "color": "#8B5CF6"
+      },
+      {
+        "id": "booth",
+        "label": "ブース",
+        "color": "#EC4899"
+      },
+      {
+        "id": "food",
+        "label": "フード",
+        "color": "#F59E0B"
+      },
+      {
+        "id": "toilet",
+        "label": "トイレ",
+        "color": "#6366F1"
+      },
+      {
+        "id": "firstaid",
+        "label": "救護",
+        "color": "#EF4444"
+      },
+      {
+        "id": "info",
+        "label": "案内所",
+        "color": "#06B6D4"
+      }
+    ]
+  },
+  {
+    "id": "custom",
+    "name": "カスタム",
+    "sub": "自由",
+    "color": "#6B7280",
+    "desc": "自分で作成",
+    "pins": [
+      {
+        "id": "pin1",
+        "label": "ピン1",
+        "color": "#FF4D5E"
+      },
+      {
+        "id": "pin2",
+        "label": "ピン2",
+        "color": "#4DA3FF"
+      },
+      {
+        "id": "pin3",
+        "label": "ピン3",
+        "color": "#10B981"
+      }
+    ]
+  }
+];
+</script><script>(function(){
+const key='chatto-pinmap-demo-v2';
+document.getElementById('resetDemo').onclick=()=>{if(confirm('デモの変更を消してサンプルに戻しますか？')){try{localStorage.removeItem(key);location.reload();}catch(e){alert('保存領域にアクセスできません。ブラウザーの設定を確認してください。');}}};
+try{
+if(localStorage.getItem(key))return;
+const c=document.createElement('canvas');c.width=1200;c.height=800;const x=c.getContext('2d');
+x.fillStyle='#eae7d8';x.fillRect(0,0,1200,800);
+x.fillStyle='#cedcc4';for(let row=0;row<5;row++)for(let col=0;col<7;col++){x.fillRect(35+col*175,70+row*150,115,90);}
+x.fillStyle='#b8d9e7';x.beginPath();x.moveTo(900,0);x.bezierCurveTo(760,280,1050,450,810,800);x.lineTo(970,800);x.bezierCurveTo(1180,450,900,280,1040,0);x.fill();
+x.strokeStyle='#fffdf5';x.lineWidth=30;for(const y of [210,420,630]){x.beginPath();x.moveTo(0,y);x.lineTo(1200,y);x.stroke();}for(const xx of [230,570,750]){x.beginPath();x.moveTo(xx,0);x.lineTo(xx,800);x.stroke();}
+x.strokeStyle='#d6c7a5';x.lineWidth=3;for(const y of [210,420,630]){x.beginPath();x.moveTo(0,y);x.lineTo(1200,y);x.stroke();}
+x.fillStyle='#a8c994';x.fillRect(280,470,220,120);x.fillStyle='#e9caa4';x.fillRect(340,280,170,90);x.fillStyle='#e8baae';x.fillRect(70,280,120,85);
+x.fillStyle='#30483d';x.font='bold 30px sans-serif';x.fillText('みどり公園',300,545);x.fillText('中央小学校',345,330);x.fillText('公民館',80,330);
+x.fillStyle='#3c6576';x.fillText('青葉川',990,335);x.fillStyle='#4d5b60';x.font='24px sans-serif';x.fillText('駅前通り',40,198);x.fillText('中央通り',350,408);x.fillText('さくら通り',40,618);
+x.fillStyle='#183d4b';x.fillRect(20,18,580,46);x.fillStyle='#ffffff';x.font='bold 25px sans-serif';x.fillText('サンプル地区 ｜ 架空の地図・デモ専用',35,50);
+x.fillStyle='#183d4b';x.font='20px sans-serif';x.fillText('実際の地理・災害情報ではありません',25,775);
+const text=c.toDataURL('image/jpeg',.85).split(',')[1],s=new PinSync.Store(),map='demo-map',parts=Math.ceil(text.length/24000);let n=0;
+const put=(kind,key,data)=>s.create(kind,key,data,'デモ参加者','demo-'+(++n),Date.now());
+put('map','map:'+map,{map,name:'サンプル地区（架空）',parts});for(let i=0;i<parts;i++)put('chunk','chunk:'+map+':'+i,{map,index:i,text:text.slice(i*24000,(i+1)*24000)});
+put('pin','pin:demo-shelter',{map,title:'中央小学校・避難所',note:'サンプルです。実際の避難所情報ではありません。',color:'#338a65',type:'避難所',point:[35,42]});
+put('pin','pin:demo-danger',{map,title:'浸水注意（サンプル）',note:'ピンをタップすると詳細を確認できます。一覧からも選択できます。',color:'#dc4545',type:'危険：浸水',point:[76,53]});
+put('pin','pin:demo-member',{map,title:'山田さんの位置（例）',note:'位置は手動で登録します。GPSによる自動追跡ではありません。',color:'#468add',type:'メンバーの位置（手動）',point:[20,77]});
+put('route','route:demo-route',{map,title:'避難ルートの例',note:'手描きルートのサンプルです。実際の安全な経路を示すものではありません。',color:'#28c4aa',points:[[20,77],[20,52],[48,52],[48,42],[35,42]]});
+localStorage.setItem(key,JSON.stringify({items:s.snapshot(),pending:[],selected:map}));
+}catch(e){console.warn('デモの初期保存に失敗',e);}
+})();</script><script>'use strict';
+const $=id=>document.getElementById(id), api=window.webxdc, live=!!(api&&api.sendUpdate&&api.setUpdateListener);
+const KEY='chatto-pinmap-demo-v2', uid=()=>crypto.randomUUID?crypto.randomUUID():Array.from(crypto.getRandomValues(new Uint32Array(4)),n=>n.toString(16)).join('-');
+let saved={}, storageError='', receiveError='', transportError='', ready=!live;
+try {saved=JSON.parse(localStorage.getItem(KEY)||'{}');} catch(e){storageError='保存データを読めません。JSONのバックアップを確認してください。';}
+let store=new PinSync.Store(Array.isArray(saved.items)?saved.items:[]), pending=Array.isArray(saved.pending)?saved.pending.filter(PinSync.valid):[], selected=typeof saved.selected==='string'?saved.selected:'', inflight=[], sending=false, timer, ackTimer, lastSend=0;
+let mode='', draft=[], draftPoint=null, detailKey='', imageFile=null, transform={x:0,y:0,s:1}, base={w:1,h:1}, imageURL='', gesture=null, pointers=new Map(), moved=false;
+let filterTemplate='all',editorContext=null,imageFailed=false;
+let editingKey='',editingVersion='',movingKey='',movingVersion='';
+const stateNames={unconfirmed:'未確認',confirmed:'確認済',working:'対応中',resolved:'解消・終了'};
+function archived(id){return !!store.items.get('mapmeta:'+id)?.data.archived;}
+function matches(e){const d=e.data,q=$('search').value.trim().toLocaleLowerCase(),st=d.state||'unconfirmed',t=d.checkedAt||0,age=$('filterAge').value;return (!q||[d.title,d.note,e.author].join(' ').toLocaleLowerCase().includes(q))&&($('filterState').value==='all'||st===$('filterState').value)&&($('filterType').value==='all'||(d.type||'ルート')===$('filterType').value)&&(filterTemplate==='all'||(d.template||'bousai')===filterTemplate)&&(age==='all'||age==='unchecked'&&!t||age==='stale'&&(!t||t<Date.now()-86400000)||age==='recent'&&t>0&&t>=Date.now()-86400000&&t<=Date.now());}
+function backupItems(){return $('exportScope').value==='selected'?store.snapshot().filter(e=>e.kind==='delete'||e.data?.map===selected):store.snapshot();}
+const author=live?String(api.selfName||'参加者').slice(0,80):'ブラウザー試用';
+function toast(msg){$('toast').textContent=msg;$('toast').hidden=false;clearTimeout(toast.timer);toast.timer=setTimeout(()=>$('toast').hidden=true,6500);}
+function persist(){try{localStorage.setItem(KEY,JSON.stringify({items:store.snapshot(),pending,selected}));return true;}catch(e){storageError='端末への保存に失敗しました。空き容量とバックアップを確認してください。';return false;}}
+function syncDetails(){
+ const m=currentMap();let received=0,missing=[];
+ if(m)for(let i=0;i<m.data.parts;i++){if(store.items.get('chunk:'+selected+':'+i)?.kind==='chunk')received++;else missing.push(i+1);}
+ $('syncDetails').textContent=(m?'地図「'+m.data.name+'」：画像 '+received+'/'+m.data.parts+'片、ピン '+store.all('pin',selected).length+'件、ルート '+store.all('route',selected).length+'件。'+(missing.length?'未受信の画像片：'+missing.join(',')+'。画像が見える端末から再送してください。':imageFailed?'画像は揃っていますが表示に失敗しました。':'画像片は揃っています。'):'地図の登録情報を受信していません。')+(live&&api.isBroadcast?' このチャットはブロードキャストとして動作しています。':'');
+ $('resendMap').disabled=!live||!ready||!!storageError||!m||!store.image(selected)||imageFailed||sending||pending.length>0;
+}
+function status(){
+ const n=pending.length;
+ $('status').textContent=[live?(ready?'webxdc 接続中':'受信履歴を読込中…'):'デモ：このブラウザーだけに保存（端末間共有なし）',n?`未受付 ${n}件${inflight.length?'（送信応答待ち）':''}`:'送信待ちなし',transportError,receiveError,storageError].filter(Boolean).join(' ｜ ');
+ $('upload').disabled=!!storageError||!ready; $('retry').disabled=!live||!ready||!!storageError;
+ $('export').disabled=!ready;syncDetails();
+}
+function commit(specs){
+ if(!ready){toast('受信履歴の読込が終わるまでお待ちください。');return false;}
+ if(storageError){toast(storageError);return false;}
+ const before=store.snapshot(), count=pending.length;
+ try{for(const s of specs){const e=store.create(s.kind,s.key,s.data,author,uid());if(live)pending.push(e);}if(!persist())throw Error(storageError);}
+ catch(e){store=new PinSync.Store(before);pending.length=count;toast(e.message);status();return false;}
+ render();schedule();return true;
+}
+function schedule(){clearTimeout(timer);if(!live||!ready||sending||!pending.length||storageError||transportError)return;timer=setTimeout(flush,Math.max(0,lastSend+(Number(api.sendUpdateInterval)||10000)-Date.now()));}
+async function flush(){
+ if(sending||!ready||!pending.length)return;
+ const max=Math.min(Number(api.sendUpdateMaxSize)||128000,128000), batch=[];
+ for(const e of pending){if(batch.length>=500)break;const test={payload:{app:'chatto-pinmap',v:1,events:[...batch,e]}};if(new TextEncoder().encode(JSON.stringify(test)).length>max)break;batch.push(e);}
+ if(!batch.length){transportError='送信上限が小さすぎます。この端末では共有できません。';status();return;}
+ sending=true;inflight=batch.map(e=>e.id);lastSend=Date.now();status();
+ try{await api.sendUpdate({payload:{app:'chatto-pinmap',v:1,events:batch}},'');
+  if(inflight.length) ackTimer=setTimeout(()=>{transportError='送信受付を確認できません。チャットの送信権限を確認し、再試行してください。';sending=false;inflight=[];status();},30000);
+ }catch(e){sending=false;inflight=[];transportError='送信失敗：再試行してください。';status();}
+}
+function receive(u){
+ const p=u&&u.payload;if(!p||p.app!=='chatto-pinmap'||p.v!==1||!Array.isArray(p.events)||p.events.length>500)return;
+ const accepted=new Set();for(const e of p.events){if(!PinSync.valid(e)){receiveError='不正な受信データを無視しました。';continue;}store.apply(e);accepted.add(e.id);}
+ pending=pending.filter(e=>!accepted.has(e.id));inflight=inflight.filter(id=>!accepted.has(id));
+ if(sending&&!inflight.length){sending=false;clearTimeout(ackTimer);transportError='';}
+ persist();render();schedule();
+}
+function currentMap(){return store.items.get('map:'+selected);}
+function currentTemplate(){const p=store.items.get('profile:'+selected);return PinTemplates.find(t=>t.id===(p?p.data.template:'bousai'))||PinTemplates[0];}
+function categories(){const t=currentTemplate();return [...t.pins,...(t.id==='custom'?store.all('category',selected).map(e=>({id:e.key,label:e.data.label,color:e.data.color})):[]),{id:'member',label:'メンバーの位置（手動）',color:'#468add'}];}
+function changeTemplate(id){if(!currentMap()){toast('先に地図を登録してください。');return;}if(commit([{kind:'profile',key:'profile:'+selected,data:{map:selected,template:id}}])){mode='';draft=[];$('templateSheet').close();render();toast('用途を「'+currentTemplate().name+'」に設定しました。');}}
+function renderTemplates(){
+ const t=currentTemplate(),previous=$('type').value,previousGroup=$('type').dataset.group;
+ $('template').replaceChildren();$('templateGrid').replaceChildren();$('sheetTemplateGrid').replaceChildren();
+ for(const item of PinTemplates){$('template').add(new Option(item.name+' / '+item.sub,item.id));const b=document.createElement('button'),strong=document.createElement('strong'),desc=document.createElement('span');b.type='button';b.className='template-card'+(item.id===t.id?' active':'');b.style.borderTopColor=item.color;strong.textContent=item.name+' · '+item.sub;desc.textContent=item.desc+'：'+item.pins.map(p=>p.label).join('・');b.append(strong,desc);b.onclick=()=>changeTemplate(item.id);$('templateGrid').append(b);}
+ $('template').value=t.id;$('templateDesc').textContent=t.desc;$('type').replaceChildren();for(const p of categories())$('type').add(new Option(p.label,p.label));if(previousGroup===selected+':'+t.id&&categories().some(p=>p.label===previous))$('type').value=previous;$('type').dataset.group=selected+':'+t.id;
+ $('filterTemplate').replaceChildren(new Option('すべての用途','all'));for(const p of PinTemplates)$('filterTemplate').add(new Option(p.name,p.id));$('filterTemplate').value=filterTemplate;
+ for(const card of $('templateGrid').children){const copy=card.cloneNode(true);const id=PinTemplates[[...$('templateGrid').children].indexOf(card)].id;copy.onclick=()=>changeTemplate(id);$('sheetTemplateGrid').append(copy);}
+ document.documentElement.style.setProperty('--accent',t.color);$('templateName').textContent=t.name;$('templateDot').style.background=t.color;
+ renderChips();
+}
+function renderChips(){$('pinBar').replaceChildren();for(const p of categories()){const b=document.createElement('button'),dot=document.createElement('i'),text=document.createElement('span');b.className='chip'+(mode==='pin'&&$('type').value===p.label?' active':'');dot.style.background=p.color;text.textContent=p.label; b.append(dot,text);b.onclick=()=>{if(!imageURL){toast('先に地図を登録してください。');return;}const off=mode==='pin'&&$('type').value===p.label;$('type').value=p.label;mode=off?'':'pin';draft=[];render();};$('pinBar').append(b);}}
+function view(name){document.body.dataset.screen=name;for(const n of ['map','list','members','settings'])$(n+'View').hidden=n!==name;document.querySelectorAll('[data-view]').forEach(b=>b.classList.toggle('active',b.dataset.view===name));if(name==='map')requestAnimationFrame(fit);}
+function render(){
+ const maps=store.all('map').filter(e=>!archived(e.data.map));if(!maps.some(e=>e.data.map===selected))selected=maps.length?maps[maps.length-1].data.map:'';
+ $('maps').replaceChildren();if(!maps.length)$('maps').add(new Option('地図がありません',''));
+ for(const m of maps){const complete=!!store.image(m.data.map);$('maps').add(new Option(m.data.name+(complete?'':'（画像受信中）'),m.data.map));}
+ $('maps').value=selected;const img=store.image(selected);
+ $('exportMapSelect').replaceChildren();for(const m of maps)$('exportMapSelect').add(new Option(m.data.name+(store.image(m.data.map)?'':'（画像受信中）'),m.data.map));if(!maps.length)$('exportMapSelect').add(new Option('地図がありません',''));$('exportMapSelect').value=selected;
+ $('exportMap').disabled=!img||!ready;$('exportAnnotated').disabled=!img||!ready;
+ $('exportImageNote').textContent=live?'Delta Chatの書き出し先選択画面を開きます。画像をチャットへ渡した後、Delta Chat側の保存・共有機能を利用してください。':'このブラウザーから画像ファイルをダウンロードします。';
+ $('backupExportNote').textContent=androidHost?'Androidではアプリ内の書き出し画面を開きます。JSONの表示・コピー、または容量内なら互換ファイル渡しを選べます。':live?'JSONファイルをDelta Chatへ渡し、書き出し先の選択・送信準備画面を開きます。保存や送信の完了はDelta Chat側で確認してください。':'JSONファイルをこのブラウザーからダウンロードします。';
+ renderTemplates();renderManagement();
+ $('empty').hidden=!!img;$('empty').textContent=currentMap()&&!img?'地図画像を受信中です。送信元で送信待ちがなくなるまで開いてください。':'「地図と設定」から地図画像を登録してください。';
+ if(img!==imageURL){imageFailed=false;imageURL=img||'';$('surface').style.display=img?'block':'none';if(img)$('mapImage').src=img;}
+ $('pins').replaceChildren();$('routes').replaceChildren();$('list').replaceChildren();
+ const entries=selected?[...store.all('pin',selected),...store.all('route',selected)]:[];let listed=0;
+ for(const e of entries){if(!matches(e))continue;const d=e.data;
+  if(e.kind==='pin'){const b=document.createElement('button'),marker=document.createElement('span'),letter=document.createElement('i'),label=document.createElement('span');marker.className='pin-marker';letter.textContent=d.type==='要救助'?'!':d.type.slice(0,1);marker.append(letter);label.className='pin-title';label.textContent=d.title;b.append(marker,label);b.setAttribute('aria-label',d.title+' / '+d.type);b.classList.toggle('pin-urgent',d.type==='要救助');b.style.left=d.point[0]+'%';b.style.top=d.point[1]+'%';b.style.setProperty('--pin-color',d.color);b.onclick=ev=>{ev.stopPropagation();showDetail(e.key);};$('pins').append(b);}
+  else poly(d.points,d.color);
+  if(filterTemplate!=='all'&&(d.template||'bousai')!==filterTemplate)continue;listed++;
+  const a=document.createElement('article'),t=document.createElement('strong'),p=document.createElement('p'),b=document.createElement('button');t.textContent=(e.kind==='route'?'↝ ':'📍 ')+d.title;p.textContent=(PinTemplates.find(t=>t.id===(d.template||'bousai'))?.name||'その他')+' / '+(d.type||'手描きルート')+' / '+e.author+' / '+stateNames[d.state||'unconfirmed']+' / 確認：'+(d.checkedAt?new Date(d.checkedAt).toLocaleString():'日時なし');p.className='muted';b.textContent='詳細・編集';b.onclick=()=>showDetail(e.key);a.append(t,p,b);$('list').append(a);
+ }
+ if(!listed)$('list').textContent=filterTemplate==='all'?'この地図にはまだ登録がありません。':'この用途にはまだ登録がありません。';
+ $('memberList').replaceChildren();const memberPins=(selected?store.all('pin',selected):[]).filter(e=>e.data.type.includes('位置'));for(const e of memberPins){const card=document.createElement('button');card.className='member-card';card.textContent='📍 '+e.data.title+' · '+e.author+' · '+new Date(e.time).toLocaleString();card.onclick=()=>showDetail(e.key);$('memberList').append(card);}if(!memberPins.length)$('memberList').textContent='この地図に位置の登録はありません。';
+ $('openFilters').textContent='検索・表示絞り込み（'+listed+'/'+entries.length+'件）';
+ if(draft.length)poly(draft,'#ffd369',true);
+ $('drawing').hidden=!mode;$('drawCount').textContent=mode==='move'?'移動先をタップ（ルートは先頭点の移動先）':mode==='route'?`地図を順にタップ：${draft.length}点`:'地図をタップして登録';$('undo').hidden=mode!=='route';$('finishRoute').hidden=mode!=='route';$('finishRoute').disabled=draft.length<2;
+ $('pinMode').classList.toggle('active',mode==='pin');$('routeMode').classList.toggle('active',mode==='route');
+ if(detailKey&&$('detail').open){const e=store.items.get(detailKey);if(!e||e.kind==='delete'){$('detail').close();detailKey='';toast('この項目は削除されました。');}}
+ status();
+}
+function poly(points,color,draft=false){const p=document.createElementNS('http://www.w3.org/2000/svg','polyline');p.setAttribute('points',points.map(p=>p.join(',')).join(' '));p.style.stroke=color;if(draft)p.classList.add('draft');$('routes').append(p);}
+function applyTransform(){ $('surface').style.transform=`translate(${transform.x}px,${transform.y}px) scale(${transform.s})`;}
+function fit(){if(!imageURL||!$('mapImage').naturalWidth)return;const w=$('viewport').clientWidth,h=$('viewport').clientHeight;if(!w||!h)return;const im=$('mapImage'),ratio=Math.min(w/im.naturalWidth,h/im.naturalHeight);base={w:im.naturalWidth*ratio,h:im.naturalHeight*ratio};$('surface').style.width=base.w+'px';$('surface').style.height=base.h+'px';transform={x:(w-base.w)/2,y:(h-base.h)/2,s:1};applyTransform();}
+function zoom(f,x=$('viewport').clientWidth/2,y=$('viewport').clientHeight/2){const old=transform.s,n=Math.max(.5,Math.min(8,old*f));transform.x=x-(x-transform.x)*n/old;transform.y=y-(y-transform.y)*n/old;transform.s=n;applyTransform();}
+function setMode(m){if(!imageURL){toast('先に地図画像の受信を完了してください。');return;}mode=mode===m?'':m;draft=[];render();}
+function showDetail(key){const e=store.items.get(key);if(!e||e.kind==='delete')return;detailKey=key;$('detailTitle').textContent=e.data.title;$('detailNote').textContent=e.data.note||'メモなし';$('detailMeta').textContent=(e.data.type||'手描きルート')+' / '+e.author+' / '+stateNames[e.data.state||'unconfirmed']+' / 確認：'+(e.data.checkedAt?new Date(e.data.checkedAt).toLocaleString():'日時なし');$('detail').showModal();}
+function edit(){editingKey='';editingVersion='';$('editType').value=$('type').value;$('editColor').value=mode==='route'?'#28c4aa':(categories().find(p=>p.label===$('type').value)?.color||'#338a65');$('editState').value='unconfirmed';$('checkedAt').value='';const t=currentTemplate(),type=$('type').value;editorContext={map:selected,template:t.id,type,color:categories().find(p=>p.label===type)?.color||'#338a65',kind:mode==='route'?'route':'pin'};$('editHeading').textContent=t.name+' / '+(mode==='route'?'手描きルート':type)+'を登録';$('title').value=mode==='route'?(t.id==='bousai'||t.id==='shelter'?'避難ルート（要現地確認）':t.id==='event'?'会場内の移動ルート':t.id==='kanko'?'観光ルート':'手描きルート'):type;$('note').value='';$('editor').showModal();}
+document.querySelectorAll('[data-view]').forEach(b=>b.onclick=()=>view(b.dataset.view));
+$('templateBtn').onclick=()=>$('templateSheet').showModal();$('closeTemplates').onclick=()=>$('templateSheet').close();
+$('memberPin').onclick=()=>{view('map');if(!imageURL){toast('先に地図を登録してください。');return;}$('type').value='メンバーの位置（手動）';mode='pin';render();};
+for(const dialog of [$('editor'),$('detail'),$('templateSheet')]){let backdropPress=false;dialog.addEventListener('pointerdown',e=>{const r=dialog.getBoundingClientRect();backdropPress=e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom;});dialog.addEventListener('click',()=>{if(backdropPress)dialog.close();backdropPress=false;});}
+{const nodes=[...$('settingsView').children];let card;for(const node of nodes){if(node.tagName==='H2'){card=document.createElement('div');card.className='settings-card';$('settingsView').append(card);}if(card)card.append(node);}}
+$('maps').onchange=()=>{selected=$('maps').value;filterTemplate='all';mode='';draft=[];persist();render();fit();};
+$('exportMapSelect').onchange=()=>{selected=$('exportMapSelect').value;filterTemplate='all';mode='';draft=[];persist();render();};
+$('template').onchange=()=>changeTemplate($('template').value);
+$('filterTemplate').onchange=()=>{filterTemplate=$('filterTemplate').value;render();};
+$('addCustom').onclick=()=>{const label=$('customLabel').value.trim();if(!label){toast('カスタム項目の名前を入力してください。');return;}if(!currentMap()){toast('先に地図を登録してください。');return;}if(commit([{kind:'category',key:'category:'+selected+':'+uid(),data:{map:selected,label,color:$('customColor').value}},{kind:'profile',key:'profile:'+selected,data:{map:selected,template:'custom'}}])){$('customLabel').value='';$('type').value=label;toast('カスタム項目を保存しました。');}};
+$('mapImage').onload=()=>{imageFailed=false;fit();syncDetails();};$('mapImage').onerror=()=>{imageFailed=true;$('empty').hidden=false;$('empty').textContent='地図画像の表示に失敗しました。「設定」の共有の確認をご覧ください。';syncDetails();toast('地図画像を表示できません。設定で受信状況を確認してください。');};window.addEventListener('resize',fit);
+$('plus').onclick=()=>zoom(1.3);$('minus').onclick=()=>zoom(1/1.3);$('fit').onclick=fit;$('pinMode').onclick=()=>setMode('pin');$('routeMode').onclick=()=>setMode('route');$('cancelMode').onclick=()=>{mode='';draft=[];render();};$('undo').onclick=()=>{draft.pop();render();};$('finishRoute').onclick=()=>{if(draft.length>=2)edit();};$('cancelEdit').onclick=()=>$('editor').close();
+$('form').onsubmit=e=>{e.preventDefault();const title=$('title').value.trim();if(!title||!editorContext)return;const {kind,map,template}=editorContext,old=editingKey?store.items.get(editingKey):null;
+ if(editingKey&&(!old||old.id!==editingVersion||old.kind==='delete')){toast('ほかの端末で変更されています。閉じて詳細を開き直してください。');return;}
+ const checked=$('checkedAt').value?new Date($('checkedAt').value).getTime():0;if(!Number.isFinite(checked)){toast('確認日時を確認してください。');return;}
+ const data={...(old?old.data:{}),map,template,title,note:$('note').value,color:$('editColor').value,state:$('editState').value,checkedAt:checked};
+ if(kind==='pin'){data.point=old?old.data.point:draftPoint;data.type=$('editType').value.trim()||'ピン';if(!data.point)return;}else data.points=old?old.data.points:draft.slice();
+ if(commit([{kind,key:editingKey||kind+':'+uid(),data}])){$('editor').close();editingKey='';draft=[];draftPoint=null;render();toast('変更を保存しました。順次共有します。');}
+};
+$('closeDetail').onclick=()=>$('detail').close();$('delete').onclick=()=>{if(!detailKey||!confirm('この項目の削除を全員に共有しますか？'))return;if(commit([{kind:'delete',key:detailKey,data:null}]))$('detail').close();};
+const vp=$('viewport');
+vp.onpointerdown=e=>{if(e.target.closest('button')||!imageURL)return;vp.setPointerCapture(e.pointerId);pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});moved=false;gesture={start:{x:e.clientX,y:e.clientY},last:{x:e.clientX,y:e.clientY},distance:0};if(pointers.size===2){const a=[...pointers.values()];gesture.distance=Math.hypot(a[0].x-a[1].x,a[0].y-a[1].y);moved=true;}};
+vp.onpointermove=e=>{if(!pointers.has(e.pointerId)||!gesture)return;const prev=pointers.get(e.pointerId);pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});if(pointers.size>1){const a=[...pointers.values()],dist=Math.hypot(a[0].x-a[1].x,a[0].y-a[1].y),r=vp.getBoundingClientRect();if(gesture.distance)zoom(dist/gesture.distance,(a[0].x+a[1].x)/2-r.left,(a[0].y+a[1].y)/2-r.top);gesture.distance=dist;moved=true;}
+ else {if(Math.hypot(e.clientX-gesture.start.x,e.clientY-gesture.start.y)>6)moved=true;if(moved){transform.x+=e.clientX-prev.x;transform.y+=e.clientY-prev.y;applyTransform();}}};
+vp.onpointerup=e=>{if(!pointers.has(e.pointerId))return;const tap=!moved&&pointers.size===1&&gesture;pointers.delete(e.pointerId);if(!pointers.size)gesture=null;else {const p=[...pointers.values()][0];gesture={start:p,last:p,distance:0};moved=true;}
+ if(!tap||!mode)return;const r=$('surface').getBoundingClientRect(),p=[(e.clientX-r.left)/r.width*100,(e.clientY-r.top)/r.height*100];if(!PinSync.point(p))return;
+ if(mode==='move'){const old=store.items.get(movingKey);if(!old||old.kind==='delete'||old.id!==movingVersion){toast('移動中に変更されました。詳細からやり直してください。');mode='';render();return;}const data={...old.data};if(old.kind==='pin')data.point=p;else{const dx=p[0]-data.points[0][0],dy=p[1]-data.points[0][1];data.points=data.points.map(v=>[v[0]+dx,v[1]+dy]);if(!data.points.every(PinSync.point)){toast('ルートが地図の外へ出ます。別の位置を選んでください。');return;}}if(commit([{kind:old.kind,key:old.key,data}])){mode='';render();toast('位置を変更して共有しました。');}return;}
+ if(mode==='route'){if(draft.length>=300){toast('ルートは300点までです。分割してください。');return;}draft.push(p);render();}else{draftPoint=p;edit();}};
+vp.onpointercancel=e=>{pointers.delete(e.pointerId);gesture=null;moved=true;};vp.addEventListener('wheel',e=>{e.preventDefault();const r=vp.getBoundingClientRect();zoom(e.deltaY<0?1.15:1/1.15,e.clientX-r.left,e.clientY-r.top);},{passive:false});
+$('file').onchange=()=>{imageFile=$('file').files[0]||null;$('imageInfo').textContent=imageFile?imageFile.name:'';};
+async function compress(file){
+ if(file.size>30*1024*1024)throw Error('元画像は30MB以下にしてください。');
+ const url=URL.createObjectURL(file),im=new Image();
+ try{await new Promise((resolve,reject)=>{im.onload=resolve;im.onerror=()=>reject(Error('この画像は読み込めません。JPEGまたはPNGを選んでください。'));im.src=url;});
+ const c=document.createElement('canvas'),ctx=c.getContext('2d');let ratio=Math.min(1,1600/Math.max(im.naturalWidth,im.naturalHeight));
+ for(let i=0;i<8;i++){c.width=Math.max(1,Math.round(im.naturalWidth*ratio));c.height=Math.max(1,Math.round(im.naturalHeight*ratio));ctx.fillStyle='#fff';ctx.fillRect(0,0,c.width,c.height);ctx.drawImage(im,0,0,c.width,c.height);const data=c.toDataURL('image/jpeg',.82);if(data.length<=240000)return data.split(',')[1];ratio*=.8;}throw Error('圧縮できませんでした。画像を分割してください。');
+ }finally{URL.revokeObjectURL(url);}
+}
+$('upload').onclick=async()=>{if(!imageFile){toast('地図の画像を選んでください。');return;}if(!$('mapName').value.trim()){toast('地図名を入力してください。');return;}$('upload').disabled=true;
+ try{const text=await compress(imageFile),map=uid(),parts=Math.ceil(text.length/24000),specs=[{kind:'map',key:'map:'+map,data:{map,name:$('mapName').value.trim(),parts}}];for(let i=0;i<parts;i++)specs.push({kind:'chunk',key:`chunk:${map}:${i}`,data:{map,index:i,text:text.slice(i*24000,(i+1)*24000)}});
+ if(commit(specs)){selected=map;persist();mode='';draft=[];
+
+render();view('map');toast('地図を保存しました。画像の文字が読めるか確認してください。');}
+ }catch(e){toast(e.message);}finally{status();}};
+$('retry').onclick=()=>{clearTimeout(ackTimer);sending=false;inflight=[];transportError='';schedule();status();};
+$('resendMap').onclick=()=>{
+ if(!live||!ready||storageError||sending||pending.length||!currentMap()||!store.image(selected)||imageFailed)return;
+ if(!confirm('表示中の地図画像・ピン・ルート・用途と削除情報を、このアプリの参加者へ再送しますか？'))return;
+ const before=pending.slice();pending=store.snapshot().filter(e=>e.kind==='delete'||e.data?.map===selected);
+ if(!persist()){pending=before;status();return;}
+ transportError='';schedule();status();toast('再送を予約しました。送信待ちがなくなるまで開いてください。全員への到着は各端末で確認してください。');
+};
+let backupText='',backupBytes=0,backupBusy=false;
+const androidHost=live&&/Android/i.test(navigator.userAgent),androidJSONLimit=128*1024;
+$('export').onclick=async()=>{
+ if(!ready){toast('受信履歴の読込が終わるまでお待ちください。');return;}
+ try{const text=JSON.stringify({format:'chatto-pinmap-v2',items:backupItems()});
+  if(androidHost){backupText=text;backupBytes=new TextEncoder().encode(text).length;$('backupInfo').textContent=`バックアップ全体：約${Math.ceil(backupBytes/1024)} KB。JSONの表示・選択はアプリ内で行います。`;$('backupText').value='';$('backupText').hidden=true;$('selectBackupText').hidden=true;$('sendBackupFile').disabled=backupBytes>androidJSONLimit||backupBusy;$('backupLimit').textContent=backupBytes>androidJSONLimit?'この容量はAndroidでの互換ファイル渡しの上限（128 KB）を超えています。アプリ終了を避けるため、ファイル渡しを止めています。JSONの表示・コピー、またはPCからの書き出しを利用してください。':'ファイル渡しではDelta Chatの画面へ移ります。Android実機での終了原因は未確定です。終了が続く場合はJSONの表示・コピーを利用してください。';$('backupSheet').showModal();return;}
+  await writeExportFile({name:'chatto-pinmap-backup.json',plainText:text},'application/json;charset=utf-8');}
+ catch(e){toast('JSONを書き出せませんでした。'+(e.message||'もう一度お試しください。'));}
+};
+function utf8Base64(text){const bytes=new TextEncoder().encode(text);let binary='';for(let i=0;i<bytes.length;i+=8192){let part='';for(let j=i;j<Math.min(i+8192,bytes.length);j++)part+=String.fromCharCode(bytes[j]);binary+=part;}return btoa(binary);}
+$('showBackupText').onclick=()=>{$('backupText').value=backupText;$('backupText').hidden=false;$('selectBackupText').hidden=false;$('backupText').focus();};
+$('selectBackupText').onclick=()=>{const area=$('backupText');area.focus();area.select();area.setSelectionRange(0,area.value.length);toast('選択したJSONを長押しし「コピー」を選んでください。');};
+$('closeBackup').onclick=()=>$('backupSheet').close();
+$('sendBackupFile').onclick=async()=>{if(backupBusy||!backupText||backupBytes>androidJSONLimit)return;backupBusy=true;$('sendBackupFile').disabled=true;
+ try{await writeExportFile({name:'chatto-pinmap-backup.json',base64:utf8Base64(backupText)},'application/json');}
+ catch(e){toast('JSONファイルを渡せませんでした。'+(e.message||String(e)));}
+ finally{backupBusy=false;$('sendBackupFile').disabled=backupBytes>androidJSONLimit;}
+};
+function writeExportFile(file,mime){
+ if(live){if(typeof api.sendToChat!=='function')return Promise.reject(Error('このDelta Chatではファイルの書き出しAPIを利用できません。対応する版でお試しください。'));
+  if(typeof file.plainText==='string')file={name:file.name,base64:utf8Base64(file.plainText)};
+  if(androidHost&&/\.json$/i.test(file.name)&&file.base64.length>Math.ceil(androidJSONLimit/3)*4)return Promise.reject(Error('Androidの互換ファイル渡し上限を超えています。JSONの表示・コピーを利用してください。'));
+  toast('Delta Chatで書き出し先を選んでください。送信・保存の完了はDelta Chat側で確認してください。');
+  return Promise.resolve(api.sendToChat({file}));
+ }
+ const bytes=typeof file.plainText==='string'?file.plainText:Uint8Array.from(atob(file.base64),c=>c.charCodeAt(0)),url=URL.createObjectURL(new Blob([bytes],{type:mime})),a=document.createElement('a');a.href=url;a.download=file.name;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),30000);toast('ファイルのダウンロードを開始しました。');return Promise.resolve();
+}
+function exportFile(dataURL,name){const comma=dataURL.indexOf(',');return writeExportFile({name,base64:dataURL.slice(comma+1)},dataURL.slice(5,dataURL.indexOf(';')));}
+async function mapExport(withPins){
+ const map=selected,m=store.items.get('map:'+map),image=store.image(map);if(!m||!image){toast('地図画像の受信が完了してから書き出してください。');return;}
+ const name='chatto_pinmap-'+(m.data.name.replace(/[\\/:*?"<>|\x00-\x1f]/g,'_').trim().slice(0,70)||'map');
+ const entries=[...store.all('pin',map),...store.all('route',map)];
+ try{
+  if(!withPins){await exportFile(image,name+'.jpg');return;}
+  const im=new Image();await new Promise((resolve,reject)=>{im.onload=resolve;im.onerror=()=>reject(Error('地図画像を読み込めません。'));im.src=image;});
+  const c=document.createElement('canvas');c.width=im.naturalWidth;c.height=im.naturalHeight;const x=c.getContext('2d');if(!x)throw Error('この端末では画像を作成できません。');x.drawImage(im,0,0);
+  const unit=Math.max(1,Math.min(c.width,c.height)/650),px=p=>p[0]*c.width/100,py=p=>p[1]*c.height/100;
+  x.lineJoin='round';x.lineCap='round';
+  for(const e of entries.filter(e=>e.kind==='route')){x.strokeStyle=e.data.color;x.lineWidth=4*unit;x.beginPath();e.data.points.forEach((p,i)=>i?x.lineTo(px(p),py(p)):x.moveTo(px(p),py(p)));x.stroke();}
+  x.font=`bold ${Math.round(15*unit)}px system-ui,sans-serif`;x.textBaseline='middle';
+  for(const e of entries.filter(e=>e.kind==='pin')){const d=e.data,cx=px(d.point),cy=py(d.point),r=9*unit;x.fillStyle=d.color;x.strokeStyle='#fff';x.lineWidth=2*unit;x.beginPath();x.arc(cx,cy,r,0,Math.PI*2);x.fill();x.stroke();
+   const margin=4*unit,maxWidth=c.width-2*margin;let text=d.title;while(text.length>1&&x.measureText(text+'…').width>maxWidth-12*unit)text=text.slice(0,-1);if(text!==d.title)text+='…';const w=Math.min(maxWidth,x.measureText(text).width+12*unit),h=24*unit,left=Math.max(margin,Math.min(cx-w/2,c.width-margin-w)),top=Math.max(margin,Math.min(cy-r-h-4*unit,c.height-margin-h));x.fillStyle='#101722ee';x.fillRect(left,top,w,h);x.fillStyle='#fff';x.fillText(text,left+6*unit,top+h/2,Math.max(1,w-12*unit));
+  }
+  await exportFile(c.toDataURL('image/png'),name+'-pins-routes.png');
+ }catch(e){toast('画像を書き出せませんでした。'+(e.message||'もう一度お試しください。'));}
+}
+$('exportMap').onclick=()=>mapExport(false);$('exportAnnotated').onclick=()=>mapExport(true);
+function syncViewportHeight(){const v=window.visualViewport,h=v&&v.scale===1?v.height:window.innerHeight;document.documentElement.style.setProperty('--app-height',Math.floor(h)+'px');requestAnimationFrame(fit);}
+window.addEventListener('resize',syncViewportHeight);if(window.visualViewport)window.visualViewport.addEventListener('resize',syncViewportHeight);syncViewportHeight();
+$('import').onchange=async()=>{const f=$('import').files[0];if(!f)return;try{if(f.size>15*1024*1024)throw Error('バックアップは15MB以下にしてください。');const j=JSON.parse(await f.text());if(j.format!=='chatto-pinmap-v2'||!Array.isArray(j.items)||j.items.length>20000||!j.items.every(PinSync.valid))throw Error('対応するバックアップではありません。');if(!confirm('この端末の表示にバックアップを統合します。全員への再送信は行いません。よろしいですか？'))return;const before=store.snapshot();j.items.forEach(e=>store.apply(e));if(!persist()){store=new PinSync.Store(before);throw Error(storageError);}render();toast('この端末に復元しました。共有はされません。');}catch(e){toast(e.message);}finally{$('import').value='';}};
+
+function renderManagement(){const old=$('manageMap').value,all=store.all('map');$('manageMap').replaceChildren(...all.map(m=>new Option(m.data.name+(archived(m.data.map)?'（保管済み）':''),m.data.map)));$('manageMap').value=all.some(m=>m.data.map===old)?old:selected||all[0]?.data.map||'';const keep=$('filterType').value,types=[...new Set([...store.all('pin',selected).map(e=>e.data.type),...(store.all('route',selected).length?['ルート']:[])])];$('filterType').replaceChildren(new Option('すべて','all'),...types.map(t=>new Option(t,t)));$('filterType').value=types.includes(keep)?keep:'all';}
+function localDate(t){const d=new Date(t);return new Date(t-d.getTimezoneOffset()*60000).toISOString().slice(0,16);}
+$('checkedNow').onclick=()=>$('checkedAt').value=localDate(Date.now());
+$('editEntry').onclick=()=>{const e=store.items.get(detailKey);if(!e||!['pin','route'].includes(e.kind))return;$('detail').close();editingKey=e.key;editingVersion=e.id;editorContext={kind:e.kind,map:e.data.map,template:e.data.template||'bousai'};$('editHeading').textContent='登録情報を編集';$('title').value=e.data.title;$('note').value=e.data.note;$('editType').value=e.data.type||'ルート';$('editColor').value=e.data.color;$('editState').value=e.data.state||'unconfirmed';$('checkedAt').value=e.data.checkedAt?localDate(e.data.checkedAt):'';$('editor').showModal();};
+$('moveEntry').onclick=()=>{const e=store.items.get(detailKey);if(!e||!['pin','route'].includes(e.kind)||!store.image(e.data.map))return;selected=e.data.map;movingKey=e.key;movingVersion=e.id;mode='move';draft=[];$('detail').close();view('map');render();};
+$('openFilters').onclick=()=>view('list');for(const id of ['search','filterState','filterType','filterAge'])$(id).addEventListener(id==='search'?'input':'change',render);
+$('clearFilters').onclick=()=>{$('search').value='';for(const id of ['filterState','filterType','filterAge'])$(id).value='all';filterTemplate='all';render();};
+$('renameMap').onclick=()=>{const e=store.items.get('map:'+$('manageMap').value),name=$('renameValue').value.trim();if(!e||!name){toast('地図と新しい名前を指定してください。');return;}if(commit([{kind:'map',key:e.key,data:{...e.data,name}}]))$('renameValue').value='';};
+$('archiveMap').onclick=()=>{const map=$('manageMap').value;if(!map)return;const next=!archived(map);if(!confirm(next?'この地図を全員の通常一覧から保管しますか？データは残ります。':'この地図を全員の通常一覧に戻しますか？'))return;commit([{kind:'mapmeta',key:'mapmeta:'+map,data:{map,archived:next}}]);};
+$('copyMap').onclick=()=>{const source=$('manageMap').value,old=store.items.get('map:'+source),name=$('copyMapName').value.trim();if(!old||!name||!store.image(source)){toast('画像の揃った地図と複製先の名前を指定してください。');return;}const map=uid(),specs=[{kind:'map',key:'map:'+map,data:{...old.data,map,name}}];for(const e of store.snapshot().filter(e=>e.data?.map===source&&(['chunk','profile','category'].includes(e.kind)||$('copyEntries').checked&&['pin','route'].includes(e.kind)))){const key=e.kind==='chunk'?'chunk:'+map+':'+e.data.index:e.kind==='profile'?'profile:'+map:e.kind==='category'?'category:'+map+':'+uid():e.kind+':'+uid();specs.push({kind:e.kind,key,data:{...e.data,map}});}if(commit(specs)){selected=map;persist();render();$('copyMapName').value='';toast('地図を複製して共有します。');}};
+$('shareRestored').onclick=()=>{if(!live||!ready||storageError||sending||pending.length){toast('接続状態と送信待ちを確認してください。');return;}if(!store.all('map').length||store.all('map').some(m=>!store.image(m.data.map))){toast('すべての地図画像が揃った端末で実行してください。');return;}if(!confirm('保管済みを含む全地図・登録情報・削除情報を、このアプリの参加者へ共有しますか？'))return;const before=pending;pending=store.snapshot();if(!persist()){pending=before;status();return;}transportError='';schedule();status();toast('全地図の共有を予約しました。送信待ちがなくなるまで開いてください。');};
+render();view('map');
+if(live){try{Promise.resolve(api.setUpdateListener(receive,0)).then(()=>{ready=true;render();schedule();}).catch(()=>{receiveError='受信履歴の読込に失敗しました。アプリを開き直してください。';status();});}catch(e){receiveError='webxdc受信を開始できません。';status();}}
+</script></body></html>
