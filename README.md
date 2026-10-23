@@ -30,8 +30,8 @@ AndroidでJSONボタンを押した直後にDelta Chat自体が終了すると�
 |ファイル|用途|
 |---|---|
 |[chatto_pinmap-2.3.0.xdc](chatto_pinmap-2.3.0.xdc)|Delta Chatで使うアプリ本体|
-|[chatto_pinmap.html)]|ブラウザーで読む画面図付きマニュアル。画像を内蔵し、オフラインで閲覧可能|
-|[chatto_pinmap-demo.html]]|単体で開ける操作デモ。端末間共有は行いません|
+|[chatto_pinmap.html](chatto_pinmap.html)|ブラウザーで読む画面図付きマニュアル。画像を内蔵し、オフラインで閲覧可能|
+|[chatto_pinmap-demo.html](chatto_pinmap-demo.html)|単体で開ける操作デモ。端末間共有は行いません|
 
 ## はじめるまで
 
