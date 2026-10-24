@@ -7,12 +7,8 @@
 | ファイル | 用途 |
 |---|---|
 | [chatto_pinmap-2.4.14.xdc](chatto_pinmap-2.4.14.xdc) | Delta Chatで開く本体 |
-| [index.html](index.html) | 単体で開けるサンプル入り操作デモ |
-| [操作マニュアル HTML](chatto_pinmap-2.4.14-manual.html) | オフラインでも読める画面図入りガイド |
-| [操作マニュアル Word](chatto_pinmap-2.4.14-manual.docx) | 編集・印刷用 |
-| [操作マニュアル PDF](chatto_pinmap-2.4.14-manual.pdf) | 閲覧・印刷用 |
-| [デモの開き方](デモの開き方.txt) | デモの開始とリセット |
-| chatto-pinmap/ | 本体のソース。普段使う場合はxdcまたはデモを開いてください |
+| [chatto_pinmap-demo.html](chatto_pinmap-demo.html) | 単体で開けるサンプル入り操作デモ |
+| [操作マニュアル HTML](chatto_pinmap.html) | オフラインでも読める画面図入りガイド |
 
 ## GPSの任意付加と確認待ち通知
 
